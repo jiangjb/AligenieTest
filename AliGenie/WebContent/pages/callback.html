@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no" />
+    <title>Ivor智能家居中控</title>
+    
+    <link rel="stylesheet" type="text/css" href="../css/baseCn.css" />
+    <link rel="stylesheet" type="text/css" href="../css/subpageCn.css" />
+
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script type="text/javascript" src="../js/sys_config_string.js"></script>
+    <script type="text/javascript" src="../js/pages/callback.js"></script>
+    <script type="text/javascript">
+    
+    </script>
+</head>
+<body>
+	<div id="main1" style="overflow-y: scroll;position: absolute;z-index: 10;width: 100%;">
+		<div class="divLogin">
+			<div id="Div_Form">
+				<form action="../token" method="post" id="Form1" name="Form1">
+				<label id="Label_Username">用户:</label><br><input type="text" style="width:100%" id="Text_ClientId" name="Text_ClientId" value="" placeholder="ClientId"/><br><br>
+				<label id="Label_Password">密钥:</label><br><input type="text" style="width:100%" id="Text_ClientSecret" name="Text_ClientSecret" value="" placeholder="ClientSecret"/><br>
+				<input type="hidden" id="code" name="client_id" value=""/>
+				<input type="hidden" id="grant_type" name="grant_type" value=""/>
+				<input type="hidden" id="redirect_uri" name="redirect_uri" value=""/>
+				</form>
+			</div>
+			<div id="Button_Auth" class="btnLogin" >获取</div>
+		</div>
+	</div>
+	<div id="footer"></div>
+</body>
+</html>

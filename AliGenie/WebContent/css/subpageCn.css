@@ -1,0 +1,62 @@
+
+.divTitle{ width:82%; margin-left:9%;}
+.divTitle span{ width:100%; font-size:1.3em; text-align:center; line-height:200%; display:block;}
+.btnSwitch{ width:10%; top:0; left:9%; position:absolute;}
+/*.btnBack{ width:10%; top:0; right:9%; position:absolute;}*/
+.divContent{ width:82%; height:150px; left:9%; bottom:0; border-top:1px solid #FEFEFE; border-bottom:1px solid #FEFEFE; overflow-y:scroll; position:absolute;}
+
+.divLight,.divCurtain,.divAirconditioning{background-color: rgba(20,20,20,0.6);border-radius:5px;padding:1px;border: 1px solid;border-color: #777}
+/*��½ҳ - login*/
+.divLogin{width: 80%;margin-left: auto;margin-top: 50%;font-size: 1.5em;}
+#Div_Form{width: 50%;margin: 30px 10% 0;}
+.btnLogin{width: 50%;border: 1px solid;color: #fff;background-color: rgba(30,30,30,0.6);margin: 30px 10% 0;line-height:1.5em;font-size: 1.5em;text-align: center;}
+/*��ҳ - index*/
+.ulIndex{ width:100%;}
+.ulIndex li{ width:27%; border:1px solid #FEFEFE; text-align:center; float:left;}
+.ulIndex img{ width:44%; margin:1em 0 0.2em 0;}
+.ulIndex span{ font-size:1.2em; letter-spacing:0.2em; display:block;}
+
+
+/*�ƹ���� - light*/
+.divLight{ width:22.5%; margin-left:2px; text-align:center; float:left;}
+.divLight img{ width:50%;}
+.divLight span{ font-size:1em; display:block;}
+
+
+/*�������� - curtain*/
+.divCurtain{ width:22.5%;text-align:center; float:left;}
+.divCurtain img{ width:50%;}
+.divCurtain span{ font-size:1em; display:block;}
+.spanCurtainName{ width:22.5%; margin-left:2%; float:left; display:block;}
+
+
+
+/*�յ��б� - airconditoning*/
+.divAirconditioning{ width:22.5%; text-align:center; float:left;}
+.divAirconditioning img{ width:50%;}
+.divAirconditioning span{ font-size:1em; display:block;}
+
+/*�յ����� - airconditoning_browse*/
+.divContentAir{ overflow:hidden;}
+.divAirRow{ width:100%; overflow:hidden;}
+.divAirRow span{ width:15%; margin-left:2%; float:left; display:block;}
+.divAir{ width:25%;  text-align:center; float:left; line-height:0;}
+.divAir img{ width:50%;}
+.divAirWord{ font-size:1.8em; line-height:150%;}
+
+/*�����û� - user_sub*/
+.divUserSub,.li_room,.li_roomAdd{width:90%;height:5em; font-size:1.4em;line-height:1.4em;padding: 0.5em 0.5em 0 0.5em;background-color:rgba(35,35,35,0.6);color:#ccc;margin-top:12px;margin-left:2%;-webkit-box-shadow:0 0 10px #c1c1c1;  -moz-box-shadow:0 0 10px #c1c1c1;  box-shadow:0 0 10px #c1c1c1; }
+.divUserSubInfo{float:left;margin-left:0.5em;}
+.divUserSubDelete{float:right;margin-top:1em;border: 1px solid;padding: 0.5em;}
+.imgHead{float:left;width:4.5em;height:4.5em;}
+
+/*�����б� - room*/
+.button_room{float:right;margin-top:1em;margin-left:0.3em;border: 1px solid;padding: 0.5em;}
+.li_room:active{background-color:rgba(50,50,50,0.8);}
+/*ѡ���ֽ- wall_paper*/
+.imgPreview{position:absolute;top:3.7em;bottom:0px;width:100%;z-index:0}
+.divWallPaperContent{width:100%;text-align:center;height:300px;}
+.divImgChoose{ width: 50%;border: 1px solid;color: #fff;background-color: rgba(30,30,30,0.6);margin: 50px auto 0;line-height: 80px;font-size: 2em;}
+
+/*����ͷֱ��*/
+#Div_Camera img{width:100%;}
