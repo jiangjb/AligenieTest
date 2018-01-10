@@ -27,6 +27,9 @@ public class Authorize {
 			case "IVOR_HOME":
 				_resources=new ResourcesIvorHome();
 				return _resources;
+			case "IVOR_HOTEL":
+				_resources=new ResourcesIvorHome();
+				return _resources;
 			default:
 				throw new Exception("找不到对应的资源授权");
 		}

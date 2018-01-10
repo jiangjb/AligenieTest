@@ -9,6 +9,7 @@ import com.aligenie.action.resources.AliGenieResources;
 import com.aligenie.common.BasicFunction;
 import com.aligenie.common.MAction;
 import com.aligenie.common.MConfig;
+import com.aligenie.common.VO;
 import com.aligenie.vo.Authorize;
 
 import net.sf.json.JSONArray;
@@ -75,6 +76,7 @@ public class AliGenieAction extends MAction {
 		String redirect_uri=BasicFunction.replaceSQL(vo.get("redirect_uri"));
 		String username=BasicFunction.replaceSQL(vo.get("Text_UserName"));
 		String password=BasicFunction.replaceSQL(vo.get("Text_Password"));
+		String project=BasicFunction.replaceSQL(vo.get("Select_Project"));
 		
 		Authorize auth=new Authorize();
 		auth.client_id=client_id;
@@ -82,11 +84,7 @@ public class AliGenieAction extends MAction {
 		JSONArray rs=dao.fillRS(sql);
 		if(rs.size()>0){
 			JSONObject row=rs.getJSONObject(0);
-			auth.config=new MConfig();
-			auth.config.JDBC_URL=row.getString("jdbcURL");
-			auth.config.JDBC_USERNAME=row.getString("jdbcUser");
-			auth.config.JDBC_PASSWORD=row.getString("jdbcPass");
-			auth.project=row.getString("project");
+			auth.project=project;//row.getString("project");
 			auth.client_secret=row.getString("client_secret");
 			//楠岃瘉鐧婚檰
 			AliGenieResources resource=auth.createResources();
@@ -111,6 +109,17 @@ public class AliGenieAction extends MAction {
 				r.put("access_token", auth.access_token);
 				r.put("refresh_token", auth.refresh_token);
 				r.put("expires_in",auth.expires_in);
+				
+				AliGenieResources r1=auth.getResources();
+				VO vo1=new VO();
+				vo1.setProperty("username", r1.getUserName());
+				vo1.setProperty("pwd", r1.getPwd());
+				vo1.setProperty("accessToken", auth.access_token);
+				vo1.setProperty("refreshToken", auth.refresh_token);
+				vo1.setProperty("project", auth.project);
+				vo1.setProperty("client_id", auth.client_id);
+				vo1.TableName= "t_aligenie_user";
+				dao.add(vo1);
 			}
 		}
 		//AUTHORIZATION_CODE
@@ -126,6 +135,10 @@ public class AliGenieAction extends MAction {
 		if(vo.containsKey("refresh_token")){
 			String refresh_token=vo.get("refresh_token");
 			Authorize auth=this.getAuthByRefreshToken(refresh_token);
+			if(auth==null){
+				auth=reconnectByRefreshToken(refresh_token);
+				
+			}
 			if(auth!=null){
 				auth.access_token=BasicFunction.createNoncestr(32);
 				auth.refresh_token=BasicFunction.createNoncestr(32);
@@ -160,12 +173,50 @@ public class AliGenieAction extends MAction {
 		}
 		return null;
 	}
+	
+	private Authorize reconnectByRefreshToken(String refreshToken) throws Exception{
+		Authorize auth=null;
+		String sql="SELECT * FROM t_aligenie_user WHERE refreshToken='" + refreshToken +"'";
+		JSONArray rs=dao.fillRS(sql);
+		if(rs.size()>0){
+			JSONObject row=rs.getJSONObject(0);
+			auth=new Authorize();
+			auth.client_id=row.getString("client_id");
+			auth.project=row.getString("project");
+			AliGenieResources resource=auth.createResources();
+			if(!resource.login(row.getString("username"), row.getString("pwd"))){
+				auth=null;
+			}else{
+				this._list_authorize.add(auth);
+			}
+		}
+		return auth;
+	}
+	private Authorize reconnectByAccessToken(String accessToken) throws Exception{
+		Authorize auth=null;
+		String sql="SELECT * FROM t_aligenie_user WHERE accessToken='" + accessToken +"'";
+		JSONArray rs=dao.fillRS(sql);
+		if(rs.size()>0){
+			JSONObject row=rs.getJSONObject(0);
+			auth=new Authorize();
+			auth.client_id=row.getString("client_id");
+			auth.project=row.getString("project");
+			AliGenieResources resource=auth.createResources();
+			if(!resource.login(row.getString("username"), row.getString("pwd"))){
+				auth=null;
+			}else{
+				this._list_authorize.add(auth);
+			}
+		}
+		return auth;
+	}
 	//********************************************************************************************************************
 	//分割线，天猫精灵对接
 	//********************************************************************************************************************
 	
-	/**设备发现**/
-	private void deviceDiscovery(String accessToken,JSONObject result) {
+	/**设备发现
+	 * @throws Exception **/
+	private void deviceDiscovery(String accessToken,JSONObject result) throws Exception {
 		JSONObject header=new JSONObject();
 		JSONObject payload=new JSONObject();
 		header.put("namespace", "AliGenie.Iot.Device.Discovery");
@@ -176,6 +227,9 @@ public class AliGenieAction extends MAction {
 		JSONArray devices=new JSONArray();
 		//获取sessionId
 		Authorize auth=this.getAuthByAccessToken(accessToken);
+		if(auth==null){
+			auth=reconnectByAccessToken(accessToken);
+		}
 		if(auth==null)return;
 		//根据sessionId获取房间和灯的列表
 		try {
@@ -193,7 +247,7 @@ public class AliGenieAction extends MAction {
 
 	}
 	
-	private void deviceControl(String name,JSONObject payload_get,JSONObject result) {
+	private void deviceControl(String name,JSONObject payload_get,JSONObject result) throws Exception {
 		String deviceId=payload_get.getString("deviceId");
 		String accessToken=payload_get.getString("accessToken");
 		String deviceType=payload_get.getString("deviceType");
@@ -214,6 +268,9 @@ public class AliGenieAction extends MAction {
 		result.put("payload", payload);
 		
 		Authorize auth=this.getAuthByAccessToken(accessToken);
+		if(auth==null){
+			auth=reconnectByAccessToken(accessToken);
+		}
 		if(auth!=null) {
 			auth.getResources().deviceAction(deviceId, deviceType, name,value);
 		}

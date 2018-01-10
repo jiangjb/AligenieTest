@@ -51,7 +51,7 @@ public class ResourcesIvorHome extends AliGenieResources {
 			}
 		}
 	}
-	public void deviceAction(String deviceId,String deviceType,String action,String value) {
+	public void deviceAction(String deviceId,String deviceType,String action,String value) throws Exception {
 		//curtain，	aircondition，	light，	television
 		if(deviceType.equals("light")) {
 			if(action.equals("TurnOn")) {
@@ -112,68 +112,35 @@ public class ResourcesIvorHome extends AliGenieResources {
 				if(value.equals("airsupply"))val=0;
 				airClick(deviceId,"mode="+val);
 			}
-			//SetTemperature,AdjustUpTemperature,AdjustDownTemperature,SetWindSpeed,AdjustUpWindSpeed,AdjustDownWindSpeed,SetMode
 		}
-			//模式
-//			｛
-//			  "header":{
-//			      "namespace":"AliGenie.Iot.Device.Control",
-//			      "name":"SetMode",
-//			      "messageId":"1bd5d003-31b9-476f-ad03-71d471922820",
-//			      "payLoadVersion":1
-//			   },
-//			   "payload":{
-//			       "accessToken":"access token"
-//			       "deviceId":"34234",
-//			       "deviceType":"XXX",
-//			       "attribute":"mode",
-//			       "value":"auto",
-//			       "extensions":{
-//			           "extension1":"",
-//			           "extension2":""
-//			      }  
-//			    }
-//			  ｝
-			//风速
-//			｛
-//			  "header":{
-//			      "namespace":"AliGenie.Iot.Device.Control",
-//			      "name":"SetWindSpeed",
-//			      "messageId":"1bd5d003-31b9-476f-ad03-71d471922820",
-//			      "payLoadVersion":1
-//			   },
-//			   "payload":{
-//			       "accessToken":"access token",
-//			       "deviceId":"34234",
-//			       "deviceType":"XXX",
-//			       "attribute":"windspeed",   
-//			       "value":"auto" ,		//auto  low  medium  high
-//			       "extensions":{
-//			           "extension1":"",
-//			           "extension2":""
-//			      }              
-//			    }
-//			  ｝
 
 		
 	}
-	private void lightClick(String deviceId,String action) {
+	private void lightClick(String deviceId,String action) throws Exception {
 		String url=DO_URL+"?action=LIGHT_CLICK&sessionId=" + _sessionId + "&lightId=" + deviceId + "&power=" + action +"&temp=" + Math.random();
 		String result=HttpUtil.executeGet(url);
+		checkResult(result,url);
 	}
-	private void curtainClick(String deviceId,String action) {
+	private void curtainClick(String deviceId,String action) throws Exception {
 		String url=DO_URL+"?action=CURTAIN_CLICK&sessionId=" + _sessionId + "&curtainId=" + deviceId + "&commond=" + action +"&temp=" + Math.random();
 		String result=HttpUtil.executeGet(url);
+		checkResult(result,url);
 	}
-	private void airClick(String deviceId,String action){
-//		if(!vo.containsKey("sessionId"))throw new Exception("缺少参数");
-//		if(!vo.containsKey("airId"))throw new Exception("缺少参数");
-//		if(!vo.containsKey("mode"))throw new Exception("缺少参数");
-//		if(!vo.containsKey("power"))throw new Exception("缺少参数");
-//		if(!vo.containsKey("tempset"))throw new Exception("缺少参数");
-//		if(!vo.containsKey("windset"))throw new Exception("缺少参数");
+	private void airClick(String deviceId,String action) throws Exception{
 		String url=DO_URL+"?action=AIR_CLICK&sessionId=" + _sessionId + "&airId=" + deviceId + "&" + action +"&temp=" + Math.random();
 		String result=HttpUtil.executeGet(url);
+		checkResult(result,url);
+	}
+	
+	private void checkResult(String result,String url) throws Exception{
+		JSONObject json=JSONObject.fromObject(result);
+		String errorMessage=json.getString("errorMessage");
+		if(errorMessage.trim().length()>0){
+			System.out.println(result);
+			this.login(this._username, this._password);
+			String newresult=HttpUtil.executeGet(url);
+			System.out.println("new result:" + newresult);
+		}
 	}
 	public JSONArray getDevices()throws Exception {
 		String url=DO_URL+"?action=LOAD_GATEWAY&sessionId=" + _sessionId + "&temp=" + Math.random();
@@ -303,5 +270,15 @@ public class ResourcesIvorHome extends AliGenieResources {
 		extensions.put("extension1", "");
 		device.put("extensions", extensions);
 		return device;
+	}
+	@Override
+	public String getUserName() {
+		// TODO Auto-generated method stub
+		return this._username;
+	}
+	@Override
+	public String getPwd() {
+		// TODO Auto-generated method stub
+		return this._password;
 	}
 }	
