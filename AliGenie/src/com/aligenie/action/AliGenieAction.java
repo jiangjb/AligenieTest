@@ -197,6 +197,10 @@ public class AliGenieAction extends MAction {
 		String deviceId=payload_get.getString("deviceId");
 		String accessToken=payload_get.getString("accessToken");
 		String deviceType=payload_get.getString("deviceType");
+		String value="";
+		if(payload_get.containsKey("value")){
+			value=payload_get.getString("value");
+		}
 		JSONObject header=new JSONObject();
 		JSONObject payload=new JSONObject();
 		header.put("namespace", "AliGenie.Iot.Device.Control");
@@ -211,27 +215,9 @@ public class AliGenieAction extends MAction {
 		
 		Authorize auth=this.getAuthByAccessToken(accessToken);
 		if(auth!=null) {
-			auth.getResources().deviceAction(deviceId, deviceType, name);
+			auth.getResources().deviceAction(deviceId, deviceType, name,value);
 		}
-//		｛
-//		  "header":{
-//		      "namespace":"AliGenie.Iot.Device.Control",
-//		      "name":"TurnOn",
-//		      "messageId":"1bd5d003-31b9-476f-ad03-71d471922820",
-//		      "payLoadVersion":1
-//		   },
-//		   "payload":{
-//		       "accessToken":"access token",
-//		       "deviceId":"34234",
-//		       "deviceType":"XXX",
-//		       "attribute":"powerstate",
-//		       "value":"on",
-//		       "extensions":{
-//		          "extension1":"",
-//		          "extension2":""
-//		      }
-//		    }
-//		 ｝
+
 	}
 	private void lightClick() {
 		
