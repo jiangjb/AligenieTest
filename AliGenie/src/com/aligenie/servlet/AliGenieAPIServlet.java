@@ -3,6 +3,7 @@ package com.aligenie.servlet;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -15,6 +16,28 @@ import net.sf.json.JSONObject;
 public class AliGenieAPIServlet extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	@Override
+	public void init(){
+		try {
+			super.init();
+			//if(action4wx==null)action4wx=new IvorAction4Weixin();
+			
+			if(AliGenieAction.action==null)AliGenieAction.action=new AliGenieAction();
+		} catch (ServletException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	@Override
+	public void init(ServletConfig config){
+		try {
+			super.init(config);
+			if(AliGenieAction.action==null)AliGenieAction.action=new AliGenieAction();
+		} catch (ServletException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	public void doGet(HttpServletRequest request,HttpServletResponse response) throws IOException,ServletException{
 		doPorcess(request,response);
 	}
