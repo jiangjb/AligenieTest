@@ -53,6 +53,9 @@ public class AliGenieAction extends MAction {
 		case "AliGenie.Iot.Device.Control":
 			deviceControl(name,payload,result);
 			break;
+		case "AliGenie.Iot.Device.Query":
+			deviceQuery(name,payload,result);
+			break;
 		}
 	}
 	public void submit(String action,Map<String, String> vo,JSONObject r) throws Exception{
@@ -275,6 +278,74 @@ public class AliGenieAction extends MAction {
 			auth.getResources().deviceAction(deviceId, deviceType, name,value);
 		}
 
+	}
+	private void deviceQuery(String name,JSONObject payload_get,JSONObject result) throws Exception {
+		String deviceId=payload_get.getString("deviceId");
+		String accessToken=payload_get.getString("accessToken");
+		String deviceType=payload_get.getString("deviceType");
+		JSONArray properties=new JSONArray();
+		JSONObject header=new JSONObject();
+		JSONObject payload=new JSONObject();
+		header.put("namespace", "AliGenie.Iot.Device.Query");
+		header.put("name", name+"Response");
+		header.put("messageId", "1bd5d003-31b9-476f-ad03-71d471922820");
+		header.put("payLoadVersion", 1);
+		
+		payload.put("deviceId", deviceId);
+		
+		JSONObject propertie;
+		propertie=new JSONObject();propertie.put("name", "powerstate");propertie.put("value", "on");properties.add(propertie);
+		propertie=new JSONObject();propertie.put("name", "color");propertie.put("value", "Red");properties.add(propertie);
+		propertie=new JSONObject();propertie.put("name", "temperature");propertie.put("value", "25");properties.add(propertie);
+		propertie=new JSONObject();propertie.put("name", "windspeed");propertie.put("value", "2");properties.add(propertie);
+		propertie=new JSONObject();propertie.put("name", "humidity");propertie.put("value", "23");properties.add(propertie);
+		
+		result.put("properties", properties);
+		result.put("header", header);
+		result.put("payload", payload);
+//		｛
+//	     "properties":[
+//	       {
+//	       "name":"powerstate",        // 电源状态
+//	       "value":"on"
+//	       },
+//	        {
+//	        "name":"color",
+//	        "value":"Red"
+//	       },
+//	        {
+//	        "name":"temperature",
+//	        "value":"27"         //标准单位 摄氏度
+//	       },{
+//	         "name":"humidity",
+//	         "value":"20"
+//	       },{
+//	         "name":"windspeed",
+//	         "value":"2"   //  1对应 1档, 2对应2档， 3 对应 3档
+//	       },{
+//	         "name":"humidity",
+//	         "value":"23"
+//	      },{
+//	         "name":"pm2.5",
+//	         "value":"20"
+//	     } ,{
+//	         "name":"direction",  // 摆向方向
+//	         "value":"left"
+//	     } ,{
+//	         "name":"angle",  // 角度
+//	         "value":"60"
+//	     }      
+//	    ],
+//	  "header":{
+//	      "namespace":"AliGenie.Iot.Device.Query",
+//	      "name":"QueryResponse",
+//	      "messageId":"1bd5d003-31b9-476f-ad03-71d471922820",
+//	      "payLoadVersion":1
+//	   },
+//	   "payload":{
+//	       "deviceId":"34234"
+//	    }
+//	 ｝
 	}
 	private void lightClick() {
 		
