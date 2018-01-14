@@ -52,7 +52,8 @@ public class MConfig {
 			DEFAULT.SERVER=props.getProperty("SERVER", "");
 			DEFAULT.DOMAIN=props.getProperty("DOMAIN", "");
 			DEFAULT.PATH_LOCAL=props.getProperty("PATH_LOCAL", "");
-			ResourcesIvorHome.DO_URL=props.getProperty("SERVER_IVOR_DO", "");
+			//ResourcesIvorHome.DO_URL=props.getProperty("SERVER_IVOR_DO", "");
+			//ResourcesIvorHotel.DO_URL=props.getProperty("SERVER_IVOR_DO", "");
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("load config error " + e.getMessage());

@@ -9,7 +9,7 @@ import net.sf.json.JSONObject;
 
 public class ResourcesIvorHome extends AliGenieResources {
 
-	public static String DO_URL="http://localhost:8080/IvorHome/do";
+	public static String DO_URL="http://home.ivor-electric.com/IvorHome/do";
 	
 	private String _sessionId="";
 	private String _userId="";
