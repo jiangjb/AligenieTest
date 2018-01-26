@@ -53,7 +53,7 @@ public class AlexaAPIServlet extends HttpServlet {
 		JSONObject json=JSONObject.fromObject(postbody);
 		JSONObject result=new JSONObject();
 		try {
-			AliGenieAction.action.submit(json, result);
+			AliGenieAction.action.submitAlexa(json, result);
 			PrintWriter out=response.getWriter();
 			out.println(result.toString());
 		} catch (Exception e) {

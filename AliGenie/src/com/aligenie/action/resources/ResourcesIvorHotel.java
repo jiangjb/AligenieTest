@@ -272,4 +272,10 @@ public class ResourcesIvorHotel extends AliGenieResources {
 		device.put("extensions", extensions);
 		return device;
 	}
+
+	@Override
+	public JSONArray getDevices(String client_name) throws Exception {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

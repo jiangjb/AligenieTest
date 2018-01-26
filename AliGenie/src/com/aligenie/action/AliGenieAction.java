@@ -58,6 +58,30 @@ public class AliGenieAction extends MAction {
 			break;
 		}
 	}
+	public void submitAlexa(JSONObject postbody,JSONObject result) throws Exception{
+		JSONObject directive=postbody.getJSONObject("directive");
+		if(!directive.containsKey("header")) throw new Exception("缺少数据头");
+		if(!directive.containsKey("payload")) throw new Exception("缺少数据令牌");
+		
+		JSONObject header=directive.getJSONObject("header");
+		JSONObject payload=directive.getJSONObject("payload");
+		String namespace=header.getString("namespace");
+		String name=header.getString("name");
+		String messageId=header.getString("messageId");
+		
+		switch(namespace) {
+		case "Alexa.Discovery":
+			String accessToken=payload.getJSONObject("scope").getString("token");
+			deviceAlexaDiscovery(accessToken,result);
+			break;
+		case "Alexa.PowerController":
+			deviceAlexaControl(name,postbody,result);
+			break;
+		case "AliGenie.Iot.Device.Query":
+			deviceQuery(name,payload,result);
+			break;
+		}
+	}
 	public void submit(String action,Map<String, String> vo,JSONObject r) throws Exception{
 		switch(action){
 		case "AUTHORIZE_CODE":
@@ -248,11 +272,37 @@ public class AliGenieAction extends MAction {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		
-
 	}
-	
+	/**设备发现
+	 * @throws Exception **/
+	private void deviceAlexaDiscovery(String accessToken,JSONObject result) throws Exception {
+		JSONObject header=new JSONObject();
+		JSONObject payload=new JSONObject();
+		header.put("namespace", "Alexa.Discovery");
+		header.put("name", "Discover.Response");
+		header.put("payloadVersion", 3);
+		header.put("messageId", "1039a716-3f46-4cf5-8abb-b1c5b5a57cfd");
+		
+		
+		JSONArray devices=new JSONArray();
+		//获取sessionId
+		Authorize auth=this.getAuthByAccessToken(accessToken);
+		if(auth==null){
+			auth=reconnectByAccessToken(accessToken);
+		}
+		if(auth==null)return;
+		//根据sessionId获取房间和灯的列表
+		try {
+			devices=auth.getResources().getDevices("Alexa");
+			payload.put("endpoints",devices);
+			
+			result.put("header", header);
+			result.put("payload", payload);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	private void deviceControl(String name,JSONObject payload_get,JSONObject result) throws Exception {
 		String deviceId=payload_get.getString("deviceId");
 		String accessToken=payload_get.getString("accessToken");
@@ -279,6 +329,71 @@ public class AliGenieAction extends MAction {
 		}
 		if(auth!=null) {
 			auth.getResources().deviceAction(deviceId, deviceType, name,value);
+		}
+
+	}
+//	{
+//		  "directive": {
+//		    "header": {
+//		      "namespace": "Alexa.PowerController",
+//		      "name": "TurnOn",
+//		      "payloadVersion": "3",
+//		      "messageId": "1bd5d003-31b9-476f-ad03-71d471922820",
+//		      "correlationToken": "dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg=="
+//		    },
+//		    "endpoint": {
+//		      "scope": {
+//		        "type": "BearerToken",
+//		        "token": "access-token-from-skill"
+//		      },
+//		      "endpointId": "appliance-001",
+//		      "cookie": {}
+//		    },
+//		    "payload": {}
+//		  }
+//		}
+	private void deviceAlexaControl(String name,JSONObject postbody,JSONObject result) throws Exception {
+		JSONObject directive=postbody.getJSONObject("directive");
+		JSONObject hearder_get=directive.getJSONObject("header");
+		JSONObject endpoint_get=directive.getJSONObject("endpoint");
+		JSONObject scope=endpoint_get.getJSONObject("scope");
+		String namespace=hearder_get.getString("namespace");
+		String name_get=hearder_get.getString("name");
+		String accessToken=scope.getString("token");
+		
+		String deviceId=endpoint_get.getString("endpointId");
+		JSONObject context=new JSONObject();
+		JSONObject event=new JSONObject();
+		JSONObject header=new JSONObject();
+		JSONObject payload=new JSONObject();
+		header.put("namespace", "Alexa");
+		header.put("name", "Alexa.Response");
+		header.put("messageId", "5f8a426e-01e4-4cc9-8b79-65f8bd0fd8a4");
+		header.put("payloadVersion", 3);
+		header.put("correlationToken", "dFMb0z+PgpgdDmluhJ1LddFvSqZ/jCc8ptlAKulUj90jSqg==");
+		event.put("header", header);
+
+		JSONArray properties=new JSONArray();
+		JSONObject propertie=new JSONObject();
+		propertie.put("namespace", "Alexa.PowerController");
+		propertie.put("name", "powerState");
+		if(name_get.equals("TurnOn"))propertie.put("value", "ON");
+		if(name_get.equals("TurnOff"))propertie.put("value", "OFF");
+		propertie.put("timeOfSample", "2017-09-03T16:20:50.52Z");
+		propertie.put("uncertaintyInMilliseconds", "50");
+		properties.add(propertie);
+		context.put("properties", properties);
+		
+		result.put("context", context);
+		result.put("event", event);
+		result.put("payload", payload);
+		
+		Authorize auth=this.getAuthByAccessToken(accessToken);
+		if(auth==null){
+			auth=reconnectByAccessToken(accessToken);
+		}
+		if(auth!=null) {
+			auth.getResources().deviceAction(deviceId, "light", name_get,"");
 		}
 
 	}

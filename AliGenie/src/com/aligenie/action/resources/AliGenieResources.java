@@ -8,6 +8,7 @@ public abstract class AliGenieResources {
 	public abstract String getPwd();
 	public abstract boolean login(String username,String password)throws Exception;
 	public abstract JSONArray getDevices()throws Exception; 
+	public abstract JSONArray getDevices(String client_name)throws Exception;
 	public abstract void deviceAction(String deviceId,String deviceType,String action,String value) throws Exception;
 	
 	public abstract void timeTickSecond();
