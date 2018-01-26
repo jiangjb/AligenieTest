@@ -8,8 +8,17 @@ function getAccessToken(){
 	var grant_type=request("grant_type");
 	if(grant_type.length==0)grant_type="authorization_code";
 	data.grant_type=grant_type;
-	data.client_id="c1ebe466-1cdc-4bd3-ab69-77c3561b9dee";
-	data.client_secret="d8346ea2-6017-43ed-ad68-19c0f971738b";
+	if($("#Text_ClientId").val().length>0){
+		data.client_id=$("#Text_ClientId").val();
+	}else{
+		data.client_id="c1ebe466-1cdc-4bd3-ab69-77c3561b9dee";
+	}
+	if($("#Text_ClientSecret").val().length>0){
+		data.client_secret=$("#Text_ClientSecret").val();
+	}else{
+		data.client_secret="d8346ea2-6017-43ed-ad68-19c0f971738b";
+	}
+	
 	data.code=request("code");
 	data.redirect_uri="http%3A%2f%2flocalhost%3A8080/AliGenie/pages/callback.html";
     $.ajax({

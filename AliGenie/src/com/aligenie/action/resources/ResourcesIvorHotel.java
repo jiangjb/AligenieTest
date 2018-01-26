@@ -54,7 +54,7 @@ public class ResourcesIvorHotel extends AliGenieResources {
 			for(int i=0;i<gatewaylist.size();i++) {
 				JSONObject gateway=gatewaylist.getJSONObject(i);
 				JSONObject room=gateway;
-				JSONArray rooms=gateway.getJSONArray("ListRoom");
+				//JSONArray rooms=gateway.getJSONArray("ListRoom");
 				JSONArray lights=room.getJSONArray("ListLight");
 				for(int k=0;k<lights.size();k++) {
 					JSONObject light=lights.getJSONObject(k);

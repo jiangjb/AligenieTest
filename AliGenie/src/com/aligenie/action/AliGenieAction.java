@@ -89,6 +89,8 @@ public class AliGenieAction extends MAction {
 			JSONObject row=rs.getJSONObject(0);
 			auth.project=project;//row.getString("project");
 			auth.client_secret=row.getString("client_secret");
+			String client_name=row.getString("client_name");
+			auth.client_name=client_name;
 			//楠岃瘉鐧婚檰
 			AliGenieResources resource=auth.createResources();
 			if(resource.login(username, password)){
@@ -96,6 +98,8 @@ public class AliGenieAction extends MAction {
 				auth.code_time_millies=System.currentTimeMillis();
 				_list_authorize.add(auth);
 				r.put("code", auth.code);
+				r.put("project", auth.project);
+				r.put("client_name", client_name);
 			}
 			
 		}
@@ -112,7 +116,6 @@ public class AliGenieAction extends MAction {
 				r.put("access_token", auth.access_token);
 				r.put("refresh_token", auth.refresh_token);
 				r.put("expires_in",auth.expires_in);
-				
 				AliGenieResources r1=auth.getResources();
 				VO vo1=new VO();
 				vo1.setProperty("username", r1.getUserName());
