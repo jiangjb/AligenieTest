@@ -17,6 +17,7 @@ public class Authorize {
 	public long code_time_millies=0;
 	public String project="";
 	public MConfig config;
+	public String client_name="";
 	public String client_id="";
 	public String client_secret="";
 	public AliGenieResources getResources(){

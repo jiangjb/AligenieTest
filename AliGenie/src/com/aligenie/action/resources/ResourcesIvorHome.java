@@ -143,12 +143,28 @@ public class ResourcesIvorHome extends AliGenieResources {
 		}
 	}
 	public JSONArray getDevices()throws Exception {
+		return getDevices("AliGenie");
+		//sessionId
+	}
+	@Override
+	public JSONArray getDevices(String client_name) throws Exception {
 		String url=DO_URL+"?action=LOAD_GATEWAY&sessionId=" + _sessionId + "&temp=" + Math.random();
 		String result=HttpUtil.executeGet(url);
 		JSONObject json=JSONObject.fromObject(result);
+		JSONArray device=null;
+		if(client_name.equals("Alexa")) {
+			device=getDeviceAlexa(json);
+		}
+		if(client_name.equals("AliGenie")) {
+			device=getDeviceAliGenie(json);
+		}
+		return device;
+	}
+	public JSONArray getDeviceAliGenie(JSONObject json_home) {
+		
 		if(_devices==null)_devices=new JSONArray();
-		if(json.getString("status").equals("SUCCESS")) {
-			JSONArray gatewaylist=json.getJSONArray("Record");
+		if(json_home.getString("status").equals("SUCCESS")) {
+			JSONArray gatewaylist=json_home.getJSONArray("Record");
 			for(int i=0;i<gatewaylist.size();i++) {
 				JSONObject gateway=gatewaylist.getJSONObject(i);
 				JSONArray rooms=gateway.getJSONArray("ListRoom");
@@ -157,21 +173,21 @@ public class ResourcesIvorHome extends AliGenieResources {
 					JSONArray lights=room.getJSONArray("ListLight");
 					for(int k=0;k<lights.size();k++) {
 						JSONObject light=lights.getJSONObject(k);
-						JSONObject device=createDeviceByLight(light,room.getString("name"));
+						JSONObject device=createAliGenieDeviceByLight(light,room.getString("name"));
 						_devices.add(device);
 					}
 					
 					JSONArray curtains=room.getJSONArray("ListCurtain");
 					for(int k=0;k<curtains.size();k++) {
 						JSONObject curtain=curtains.getJSONObject(k);
-						JSONObject device=createDeviceByCurtain(curtain,room.getString("name"));
+						JSONObject device=createAliGenieDeviceByCurtain(curtain,room.getString("name"));
 						_devices.add(device);
 					}
 					
 					JSONArray airs=room.getJSONArray("ListAir");
 					for(int k=0;k<airs.size();k++) {
 						JSONObject air=airs.getJSONObject(k);
-						JSONObject device=createDeviceByAir(air,room.getString("name"));
+						JSONObject device=createAliGenieDeviceByAir(air,room.getString("name"));
 						_devices.add(device);
 					}
 				}
@@ -179,10 +195,43 @@ public class ResourcesIvorHome extends AliGenieResources {
 			return _devices;
 		}
 		return null;
-		//sessionId
 	}
-	
-	private JSONObject createDeviceByLight(JSONObject light,String room) {
+	public JSONArray getDeviceAlexa(JSONObject json_home) {
+		if(_devices==null)_devices=new JSONArray();
+		if(json_home.getString("status").equals("SUCCESS")) {
+			JSONArray gatewaylist=json_home.getJSONArray("Record");
+			for(int i=0;i<gatewaylist.size();i++) {
+				JSONObject gateway=gatewaylist.getJSONObject(i);
+				JSONArray rooms=gateway.getJSONArray("ListRoom");
+				for(int j=0;j<rooms.size();j++) {
+					JSONObject room=rooms.getJSONObject(j);
+					JSONArray lights=room.getJSONArray("ListLight");
+					for(int k=0;k<lights.size();k++) {
+						JSONObject light=lights.getJSONObject(k);
+						JSONObject device=createAlexaDeviceByLight(light,room.getString("name"));
+						_devices.add(device);
+					}
+					
+//					JSONArray curtains=room.getJSONArray("ListCurtain");
+//					for(int k=0;k<curtains.size();k++) {
+//						JSONObject curtain=curtains.getJSONObject(k);
+//						JSONObject device=createDeviceByCurtain(curtain,room.getString("name"));
+//						_devices.add(device);
+//					}
+//					
+//					JSONArray airs=room.getJSONArray("ListAir");
+//					for(int k=0;k<airs.size();k++) {
+//						JSONObject air=airs.getJSONObject(k);
+//						JSONObject device=createDeviceByAir(air,room.getString("name"));
+//						_devices.add(device);
+//					}
+				}
+			}
+			return _devices;
+		}
+		return null;
+	}
+	private JSONObject createAliGenieDeviceByLight(JSONObject light,String room) {
 		JSONObject device=new JSONObject();
 		device.put("deviceId", light.getString("id"));
 		device.put("deviceName", light.getString("name"));
@@ -209,7 +258,52 @@ public class ResourcesIvorHome extends AliGenieResources {
 		device.put("extensions", extensions);
 		return device;
 	}
-	private JSONObject createDeviceByCurtain(JSONObject light,String room) {
+	private JSONObject createAlexaDeviceByLight(JSONObject light,String room) {
+		JSONObject device=new JSONObject();
+		device.put("endpointId", light.getString("id"));
+		device.put("friendlyName", room + " " + light.getString("name"));
+		device.put("description", "light");
+		device.put("manufacturerName", "世捷智能技术");
+		ArrayList<String> displayCategories=new ArrayList<String>();
+		displayCategories.add("LIGHT");
+		device.put("displayCategories", displayCategories);
+		JSONObject cookie=new JSONObject();
+		cookie.put("key1","optionalDetailForSkillAdapterToReferenceThisDevice");
+		cookie.put("key1","There can be multiple entries");
+		cookie.put("key1","but they should only be used for reference purposes");
+		cookie.put("key1","This is not a suitable place to maintain current device state");
+		device.put("cookie", cookie);
+		
+		//device.put("icon", "https://www.gdyouliao.com/IvorHome/images/icon/1c.png");
+		
+		JSONArray capabilities=new JSONArray();
+		JSONObject AlexaInterface;
+		
+		AlexaInterface=new JSONObject();
+		AlexaInterface.put("type", "AlexaInterface");
+		AlexaInterface.put("interface", "Alexa");
+		AlexaInterface.put("version", "3");
+		capabilities.add(AlexaInterface);
+		
+		AlexaInterface=new JSONObject();
+		AlexaInterface.put("type", "AlexaInterface");
+		AlexaInterface.put("interface", "Alexa.PowerController");
+		AlexaInterface.put("version", "3");
+			JSONArray supported=new JSONArray();
+			JSONObject supported_item=new JSONObject();
+			supported_item.put("name", "powerState");
+			supported.add(supported_item);
+			JSONObject properties=new JSONObject();
+			properties.put("supported", supported);
+			properties.put("retrievable", true);
+		AlexaInterface.put("properties", properties);
+		capabilities.add(AlexaInterface);
+		
+		device.put("capabilities",capabilities);
+		
+		return device;
+	}
+	private JSONObject createAliGenieDeviceByCurtain(JSONObject light,String room) {
 		JSONObject device=new JSONObject();
 		device.put("deviceId", light.getString("id"));
 		device.put("deviceName", light.getString("name"));
@@ -236,7 +330,7 @@ public class ResourcesIvorHome extends AliGenieResources {
 		device.put("extensions", extensions);
 		return device;
 	}
-	private JSONObject createDeviceByAir(JSONObject light,String room) {
+	private JSONObject createAliGenieDeviceByAir(JSONObject light,String room) {
 		JSONObject device=new JSONObject();
 		device.put("deviceId", light.getString("id"));
 		device.put("deviceName", light.getString("name"));
@@ -281,4 +375,5 @@ public class ResourcesIvorHome extends AliGenieResources {
 		// TODO Auto-generated method stub
 		return this._password;
 	}
+	
 }	

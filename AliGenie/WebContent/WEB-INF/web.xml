@@ -21,6 +21,10 @@
         <servlet-name>AliGenieAPIServlet</servlet-name>
         <servlet-class>com.aligenie.servlet.AliGenieAPIServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>AlexaAPIServlet</servlet-name>
+        <servlet-class>com.alexa.servlet.AlexaAPIServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>AliGenieAuthorizeServlet</servlet-name>
         <url-pattern>/authorize</url-pattern>
@@ -32,6 +36,10 @@
     <servlet-mapping>
         <servlet-name>AliGenieAPIServlet</servlet-name>
         <url-pattern>/api</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AlexaAPIServlet</servlet-name>
+        <url-pattern>/alexa_api</url-pattern>
     </servlet-mapping>
         <listener> 
 		<listener-class>com.aligenie.servlet.AliGenieListener</listener-class> 

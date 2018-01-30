@@ -69,11 +69,17 @@ public class AliGenieAuthorizeServlet extends HttpServlet {
 				action="AUTHORIZE_CODE";
 				submit(result,request,response,action);
 				String code=result.getString("code");
+				String state=request.getParameter("state");
 				String url=java.net.URLDecoder.decode(redirect_uri,"utf-8");
+				String params="code=" +code;
+				if(result.getString("client_name").equals("Alexa对接")) {
+					params=params + "&state="+state;
+					//url=url +"#" + params;
+				}
 				if(url.indexOf("?")>0){
-					url=url +"&code=" +code;
+					url=url +"&" + params;
 				}else{
-					url=url +"?code=" +code;
+					url=url +"?" + params;
 				}
 				response.sendRedirect(url);
 			}

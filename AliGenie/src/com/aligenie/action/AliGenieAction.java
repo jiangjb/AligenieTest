@@ -124,6 +124,7 @@ public class AliGenieAction extends MAction {
 				r.put("code", auth.code);
 				r.put("project", auth.project);
 				r.put("client_secret", auth.client_secret);
+				r.put("client_name", client_name);
 			}
 			
 		}
